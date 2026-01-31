@@ -5,26 +5,51 @@ import { prisma } from '../../config/database';
 
 
 export const TaskRepository = {
-	async create(data: Parameters<typeof prisma.task.create>[0]['data']) {
-		return prisma.task.create({ data });
+	async create(data: any) {
+		return prisma.task.create({
+			data,
+			include: {
+				dependencies: {
+					include: { dependsOn: true }
+				}
+			}
+		});
 	},
 
 	async findAll() {
-		return prisma.task.findMany();
+		return prisma.task.findMany({
+			include: {
+				dependencies: {
+					include: { dependsOn: true }
+				}
+			}
+		});
 	},
-
 
 	async findById(id: string) {
-		return prisma.task.findUnique({ where: { id: id } });
+		return prisma.task.findUnique({
+			where: { id },
+			include: {
+				dependencies: {
+					include: { dependsOn: true }
+				}
+			}
+		});
 	},
 
-
-	async update(id: string, data: Partial<Task>) {
-		return prisma.task.update({ where: { id: id }, data });
+	async update(id: string, data: any) {
+		return prisma.task.update({
+			where: { id },
+			data,
+			include: {
+				dependencies: {
+					include: { dependsOn: true }
+				}
+			}
+		});
 	},
-
 
 	async delete(id: string) {
-		return prisma.task.delete({ where: { id: id } });
+		return prisma.task.delete({ where: { id } });
 	},
 };

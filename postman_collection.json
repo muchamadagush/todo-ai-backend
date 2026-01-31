@@ -24,7 +24,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Sample Task\",\n  \"description\": \"Description here\",\n  \"priority\": 1,\n  \"deadline\": \"2026-02-01T00:00:00.000Z\",\n  \"status\": \"todo\",\n  \"ai_generated\": false\n}"
+              "raw": "{\n  \"title\": \"Sample Task\",\n  \"description\": \"Description here\",\n  \"priority\": 1,\n  \"deadline\": \"2026-02-01T00:00:00.000Z\",\n  \"status\": \"todo\",\n  \"ai_generated\": false,\n  \"dependencies\": {\n    \"create\": [\n      { \"depends_on_task_id\": \"<uuid-task-lain>\" }\n    ]\n  }\n}"
             },
             "url": { "raw": "http://localhost:3000/api/tasks", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "tasks"] }
           }
@@ -52,7 +52,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Updated Task\",\n  \"priority\": 2\n}"
+              "raw": "{\n  \"title\": \"Updated Task\",\n  \"priority\": 2,\n  \"dependencies\": {\n    \"create\": [ { \"depends_on_task_id\": \"<uuid-task-lain>\" } ]\n  }\n}"
             },
             "url": { "raw": "http://localhost:3000/api/tasks/:id", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "tasks", ":id"] }
           }

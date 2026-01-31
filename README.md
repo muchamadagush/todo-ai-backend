@@ -7,7 +7,63 @@ A Node.js + TypeScript backend for an AI-powered Todo Management System, using E
 - **Task Management**
 	- Create, read, update, and delete tasks
 	- Each task has: UUID, title, description, priority, deadline, status (todo/doing/done), ai_generated flag, timestamps
-	- Task dependencies: tasks can depend on other tasks (managed via TaskDependency)
+	- **Task dependencies:** tasks can depend on other tasks (managed via TaskDependency, see below)
+## Task Dependencies
+
+You can create or update a task with dependencies using the `dependencies` field in the request body.
+
+### Create Task with Dependencies
+
+POST `/api/tasks`
+
+```json
+{
+	"title": "Task A",
+	"description": "Contoh task dengan dependency",
+	"priority": 1,
+	"status": "todo",
+	"dependencies": {
+		"create": [
+			{ "depends_on_task_id": "<uuid-task-lain>" }
+		]
+	}
+}
+```
+
+### Update Task Dependencies
+
+PATCH `/api/tasks/:id`
+
+```json
+{
+	"dependencies": {
+		"create": [ { "depends_on_task_id": "<uuid-task-lain>" } ],
+		"delete": [ { "id": "<uuid-taskdependency>" } ]
+	}
+}
+```
+
+### Response Structure
+
+Response for GET/POST/PATCH task will include `dependencies` array, each with:
+
+- `id`: TaskDependency UUID
+- `depends_on_task_id`: UUID of the dependency
+- `dependsOn`: the full Task object being depended on
+
+Example:
+```json
+{
+	...,
+	"dependencies": [
+		{
+			"id": "...",
+			"depends_on_task_id": "...",
+			"dependsOn": { "id": "...", "title": "...", ... }
+		}
+	]
+}
+```
 
 - **AI-Powered Features (Gemini/Google Generative AI)**
 	- **Breakdown**: Automatically break down a large task into subtasks with detailed descriptions
