@@ -3,12 +3,43 @@
 A Node.js + TypeScript backend for an AI-powered Todo Management System, using Express, MySQL, Prisma ORM, and OpenAI API.
 
 ## Features
-- Task CRUD (Create, Read, Update, Delete)
-- Task dependencies
-- AI-powered features (breakdown, priority, summary) via OpenAI
-- RESTful API
-- Input validation with Zod
-- Logging with Pino
+
+- **Task Management**
+	- Create, read, update, and delete tasks
+	- Each task has: UUID, title, description, priority, deadline, status (todo/doing/done), ai_generated flag, timestamps
+	- Task dependencies: tasks can depend on other tasks (managed via TaskDependency)
+
+- **AI-Powered Features (Gemini/Google Generative AI)**
+	- **Breakdown**: Automatically break down a large task into subtasks with detailed descriptions
+		- Endpoint: `POST /api/ai/breakdown`
+		- Request: `{ "title": "Big Project", "description": "Break this down" }`
+		- Response: `{ "subtasks": [{ "id": 1, "task_name": "...", "description": "..." }, ...] }`
+		- Subtasks may include fields: id, task_name/task, description, status
+	- **Priority**: Suggest priority (1-100) for a given task or list of tasks
+		- Endpoint: `POST /api/ai/priority`
+		- Request: `{ "tasks": [{ "title": "Task 1", "priority": 1 }, ...] }`
+		- Response: `{ "priority": 42 }`
+	- **Summary**: Summarize a list of tasks into a concise overview
+		- Endpoint: `POST /api/ai/summary`
+		- Request: `{ "tasks": [{ "title": "Task 1" }, ...] }`
+		- Response: `{ "summary": "..." }`
+
+- **Validation & Error Handling**
+	- All input validated with Zod schemas
+	- Consistent error responses with details
+
+- **Logging**
+	- All requests, errors, and AI interactions logged with Pino
+
+- **Database**
+	- MySQL 8+ with Prisma ORM
+	- UUID for all IDs (Task, TaskDependency, AiLog)
+
+- **Environment Config**
+	- All sensitive config via .env (see .env.example)
+
+- **Postman Collection**
+	- Ready-to-import API tests in `postman_collection.json`
 
 ## Requirements
 - Node.js >= 20
