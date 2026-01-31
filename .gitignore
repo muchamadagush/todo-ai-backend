@@ -2,7 +2,6 @@
 node_modules/
 dist/
 .env
-.env.*
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -28,6 +27,7 @@ coverage/
 .idea/
 *.swp
 *.swo
+*-lock.json
 
 # Build
 build/
