@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { env } from '../../config/env';
 import { prisma } from '../../config/database';
 import { BreakdownOutputSchema, PriorityOutputSchema, SummaryOutputSchema } from './ai.schemas';
@@ -6,7 +6,7 @@ import { PROMPT_BREAKDOWN, PROMPT_PRIORITY, PROMPT_SUMMARY } from './ai.prompts'
 import { AiFeature } from './ai.types';
 import { logger } from '../../shared/logger';
 
-const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
 
 const featureConfig = {
 	breakdown: { prompt: PROMPT_BREAKDOWN, schema: BreakdownOutputSchema },
@@ -23,16 +23,10 @@ export const AiOrchestrator = {
 		let status: 'success' | 'failed' = 'success';
 		let parsed: any = null;
 		try {
-			const completion = await openai.chat.completions.create({
-				model: 'gpt-3.5-turbo',
-				messages: [
-					{ role: 'system', content: prompt },
-					{ role: 'user', content: `Context: ${JSON.stringify(context)}` },
-				],
-				temperature: 0.2,
-			});
-			aiResponse = completion.choices[0].message?.content || '';
-			tokens = completion.usage?.total_tokens || 0;
+			const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
+			const result = await model.generateContent(fullPrompt);
+			aiResponse = result.response.text();
+			// Gemini API does not provide token usage directly
 			parsed = schema.safeParse(JSON.parse(aiResponse));
 			if (!parsed.success) {
 				logger.error({ aiResponse, error: parsed.error }, 'AI response validation failed');

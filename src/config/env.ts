@@ -9,4 +9,5 @@ export const env = {
 	DB_PORT: process.env.DB_PORT || '',
 	DB_TIMEZONE: process.env.DB_TIMEZONE || '',
 	OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
 };
