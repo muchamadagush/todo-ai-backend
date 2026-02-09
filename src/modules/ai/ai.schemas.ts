@@ -9,11 +9,3 @@ export const BreakdownOutputSchema = z.object({
 		status: z.string().optional()
 	}))
 });
-
-export const PriorityOutputSchema = z.object({
-	priority: z.number().int().min(1).max(100),
-});
-
-export const SummaryOutputSchema = z.object({
-	summary: z.string().min(1),
-});

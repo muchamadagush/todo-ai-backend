@@ -1,10 +1,19 @@
 import express from 'express';
+import cors from 'cors';
 import morgan from 'morgan';
 import taskRoutes from './modules/task/task.routes';
 import aiRoutes from './modules/ai/ai.routes';
 import { logger } from './shared/logger';
 
 const app = express();
+
+// CORS configuration
+app.use(cors({
+	origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+	credentials: true,
+	methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+	allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(express.json());
 app.use(morgan('dev'));

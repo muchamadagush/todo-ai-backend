@@ -1,3 +1,13 @@
-export const PROMPT_BREAKDOWN = `You are a project manager assistant.\nBreak down the following task into subtasks.\nReturn JSON only.`;
-export const PROMPT_PRIORITY = `You are an expert productivity assistant.\nAssign a priority (1-100) for the following task.\nReturn JSON only.`;
-export const PROMPT_SUMMARY = `You are an AI assistant.\nSummarize the following tasks.\nReturn JSON only.`;
+export const PROMPT_BREAKDOWN = `You are a project manager assistant.
+Break down the following task into subtasks.
+Return ONLY a JSON object with this exact structure:
+{
+  "subtasks": [
+    {
+      "id": 1,
+      "task_name": "Task name",
+      "description": "Task description",
+      "status": "todo"
+    }
+  ]
+}`;

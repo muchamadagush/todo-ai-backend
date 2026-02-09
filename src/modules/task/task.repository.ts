@@ -22,6 +22,9 @@ export const TaskRepository = {
 				dependencies: {
 					include: { dependsOn: true }
 				}
+			},
+			orderBy: {
+				created_at: 'desc'
 			}
 		});
 	},

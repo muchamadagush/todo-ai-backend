@@ -1,4 +1,4 @@
-export type AiFeature = 'breakdown' | 'priority' | 'summary';
+export type AiFeature = 'breakdown';
 
 export interface AiLog {
 	id: bigint;
