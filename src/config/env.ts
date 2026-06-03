@@ -8,6 +8,7 @@ export const env = {
 	DB_HOST: process.env.DB_HOST || '',
 	DB_PORT: process.env.DB_PORT || '',
 	DB_TIMEZONE: process.env.DB_TIMEZONE || '',
-	OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
-  GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+	LLAMA_BASE_URL: process.env.LLAMA_BASE_URL || '',
+	LLAMA_API_KEY: process.env.LLAMA_API_KEY || '',
+	LLAMA_MODEL: process.env.LLAMA_MODEL || '',
 };

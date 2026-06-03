@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import OpenAI from 'openai';
 import { env } from '../../config/env';
 import { prisma } from '../../config/database';
 import { BreakdownOutputSchema } from './ai.schemas';
@@ -6,7 +6,10 @@ import { PROMPT_BREAKDOWN } from './ai.prompts';
 import { AiFeature } from './ai.types';
 import { logger } from '../../shared/logger';
 
-const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+const openai = new OpenAI({
+	apiKey: env.LLAMA_API_KEY || 'ollama',
+	baseURL: env.LLAMA_BASE_URL || 'http://localhost:11434/v1',
+});
 
 const featureConfig = {
 	breakdown: { prompt: PROMPT_BREAKDOWN, schema: BreakdownOutputSchema },
@@ -21,20 +24,23 @@ export const AiOrchestrator = {
 		let status: 'success' | 'failed' = 'success';
 		let parsed: any = null;
 		try {
-			const model = genAI.getGenerativeModel({ 
-				model: 'gemini-3-flash-preview',
-				generationConfig: {
-					temperature: 0.7,
-					maxOutputTokens: 2048,
-				}
+			const modelName = env.LLAMA_MODEL || 'llama3.2';
+			const response = await openai.chat.completions.create({
+				model: modelName,
+				messages: [
+					{ role: 'system', content: prompt },
+					{ role: 'user', content: `Context: ${JSON.stringify(context)}` }
+				],
+				temperature: 0.7,
+				max_tokens: 2048,
+				response_format: { type: 'json_object' }
 			});
-			const result = await model.generateContent(fullPrompt);
-			aiResponse = result.response.text();
+
+			aiResponse = response.choices[0]?.message?.content || '';
+			tokens = response.usage?.total_tokens || 0;
 			
-			// Clean markdown code blocks if present
-			const cleanResponse = aiResponse.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-			
-			// Gemini API does not provide token usage directly
+			// Parse response
+			const cleanResponse = aiResponse.trim();
 			parsed = schema.safeParse(JSON.parse(cleanResponse));
 			if (!parsed.success) {
 				logger.error({ aiResponse, cleanResponse, error: parsed.error }, 'AI response validation failed');
@@ -43,8 +49,7 @@ export const AiOrchestrator = {
 		} catch (err: any) {
 			status = 'failed';
 			const errorMessage = err?.message || 'Unknown error';
-			const errorStatus = err?.status || err?.statusCode || 500;
-			logger.error({ error: err, aiResponse, errorMessage, errorStatus }, 'AI orchestrator error');
+			logger.error({ error: err, aiResponse, errorMessage }, 'AI orchestrator error');
 		}
 		
 		// Log to database
