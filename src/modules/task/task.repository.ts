@@ -53,6 +53,9 @@ export const TaskRepository = {
 	},
 
 	async delete(id: string) {
-		return prisma.task.delete({ where: { id } });
+		return prisma.$transaction(async (tx) => {
+			await tx.taskDependency.deleteMany({ where: { OR: [{ task_id: id }, { depends_on_task_id: id }] } });
+			return tx.task.delete({ where: { id } });
+		});
 	},
 };
